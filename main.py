@@ -10,25 +10,22 @@ class User:
         self._name = name               # Имя пользователя (protected)
         self._access_level = 'user'     # Уровень доступа по умолчанию — 'user'
 
-    # Метод для получения ID пользователя
     def get_user_id(self):
         """Возвращает ID пользователя"""
         return self._user_id
 
-    # Метод для получения имени пользователя
     def get_name(self):
         """Возвращает имя пользователя"""
         return self._name
 
-    # Метод для установки нового имени
     def set_name(self, new_name):
         """Устанавливает новое имя пользователя"""
         self._name = new_name
 
-    # Метод для получения уровня доступа пользователя
     def get_access_level(self):
         """Возвращает уровень доступа пользователя"""
         return self._access_level
+
 
 # Класс Admin — наследник класса User, представляет администратора компании
 class Admin(User):
@@ -38,60 +35,62 @@ class Admin(User):
         Вызывает конструктор родительского класса User.
         Устанавливает уровень доступа администратора.
         """
-        super().__init__(user_id, name)   # Инициализируем базовые атрибуты от User
-        self._access_level = 'admin'      # Меняем уровень доступа на 'admin'
+        super().__init__(user_id, name)
+        self._access_level = 'admin'
 
-    def add_user(self, user_list, new_user):
+    @staticmethod
+    def add_user(user_collection, new_user):
         """
-        Метод для добавления нового пользователя в систему.
+        Статический метод для добавления нового пользователя в систему.
         Принимает список пользователей и экземпляр User.
         """
-        user_list.append(new_user)  # Добавляем нового пользователя в список
+        user_collection.append(new_user)
         print(f"Пользователь '{new_user.get_name()}' успешно добавлен.")
 
-    def remove_user(self, user_list, user_id):
+    @staticmethod
+    def remove_user(user_collection, user_id_to_remove):
         """
-        Метод для удаления пользователя по ID.
+        Статический метод для удаления пользователя по ID.
         Принимает список пользователей и ID удаляемого пользователя.
         """
-        for user in user_list:
-            if user.get_user_id() == user_id:
-                user_list.remove(user)
-                print(f"Пользователь '{user.get_name()}' успешно удалён.")
+        for existing_user in user_collection:
+            if existing_user.get_user_id() == user_id_to_remove:
+                user_collection.remove(existing_user)
+                print(f"Пользователь '{existing_user.get_name()}' успешно удалён.")
                 return
-        # Если пользователь с таким ID не найден — выводим сообщение
-        print(f"Пользователь с ID {user_id} не найден.")
+        print(f"Пользователь с ID {user_id_to_remove} не найден.")
+
 
 # === Пример использования системы ===
 
 # Создаём пустой список для хранения всех пользователей компании
-user_list = []
+all_users = []
 
 # Создаём администратора
 admin1 = Admin(1, "Алексей")
 
 # Создаём нескольких обычных сотрудников
-user1 = User(2, "Мария")
-user2 = User(3, "Иван")
-user3 = User(4, "Светлана")
+employee1 = User(2, "Мария")
+employee2 = User(3, "Иван")
+employee3 = User(4, "Светлана")
 
 # Администратор добавляет пользователей в систему
-admin1.add_user(user_list, user1)
-admin1.add_user(user_list, user2)
-admin1.add_user(user_list, user3)
+Admin.add_user(all_users, employee1)
+Admin.add_user(all_users, employee2)
+Admin.add_user(all_users, employee3)
 
 # Проверяем содержимое списка пользователей
 print("\nСписок пользователей после добавления:")
-for user in user_list:
-    print(f"ID: {user.get_user_id()}, Имя: {user.get_name()}, Доступ: {user.get_access_level()}")
+for person in all_users:
+    print(f"ID: {person.get_user_id()}, Имя: {person.get_name()}, Доступ: {person.get_access_level()}")
 
 # Удаляем пользователя с ID 3
-admin1.remove_user(user_list, 3)
+Admin.remove_user(all_users, 3)
 
 # Проверяем содержимое списка после удаления
 print("\nСписок пользователей после удаления:")
-for user in user_list:
-    print(f"ID: {user.get_user_id()}, Имя: {user.get_name()}, Доступ: {user.get_access_level()}")
+for person in all_users:
+    print(f"ID: {person.get_user_id()}, Имя: {person.get_name()}, Доступ: {person.get_access_level()}")
 
 # Пробуем удалить несуществующего пользователя
-admin1.remove_user(user_list, 5)
+Admin.remove_user(all_users, 5)
